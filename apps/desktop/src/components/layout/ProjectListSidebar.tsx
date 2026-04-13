@@ -197,10 +197,10 @@ function ProjectListSidebar({
   onCreatePack: () => void;
   friends: { id: string; displayName: string; avatarUrl: string | null }[];
 }) {
-  const [favoritesOpen, setFavoritesOpen] = useState(true);
+  const favoritesOpen = true;
   const [projectsOpen, setProjectsOpen] = useState(true);
   const [packsOpen, setPacksOpen] = useState(false);
-  const [beatsOpen, setBeatsOpen] = useState(false);
+  const beatsOpen = true;
   const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('ghost_sidebar_order');
@@ -230,18 +230,10 @@ function ProjectListSidebar({
         <Reorder.Item key="projects" value="projects" style={{ listStyle: 'none' }} className="cursor-grab active:cursor-grabbing" whileDrag={{ scale: 1.02, zIndex: 50, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
         {/* My Beats dropdown */}
         <div>
-          <div className="h-9 px-3 mx-2 mt-1.5 w-[calc(100%-16px)] flex items-center justify-between rounded-lg glass-subtle hover:bg-white/[0.08] transition-colors cursor-grab active:cursor-grabbing">
-            <button
-              onClick={() => setBeatsOpen((v) => !v)}
-              className="flex items-center justify-between flex-1"
-            >
-              <span className="text-[13px] font-bold text-white/80 uppercase tracking-[0.08em]">
-                Projects
-              </span>
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" className={`text-ghost-text-muted transition-transform ${beatsOpen ? 'rotate-90' : ''}`}>
-                <polygon points="2,0 8,5 2,10" />
-              </svg>
-            </button>
+          <div className="h-9 px-3 mx-2 mt-1.5 w-[calc(100%-16px)] flex items-center justify-between rounded-lg glass-subtle cursor-grab active:cursor-grabbing">
+            <span className="text-[13px] font-bold text-white/80 uppercase tracking-[0.08em]">
+              Projects
+            </span>
           </div>
           {beatsOpen && (
             <div className="px-2 pb-1.5 space-y-0.5">
@@ -287,19 +279,11 @@ function ProjectListSidebar({
         <Reorder.Item key="favorites" value="favorites" style={{ listStyle: 'none' }} className="cursor-grab active:cursor-grabbing" whileDrag={{ scale: 1.02, zIndex: 50, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
         {/* Favorites dropdown */}
         <div>
-          <button
-            onClick={() => setFavoritesOpen((v) => !v)}
-            className="h-9 px-3 mx-2 mt-1.5 w-[calc(100%-16px)] flex items-center justify-between rounded-lg glass-subtle hover:bg-white/[0.08] transition-colors cursor-grab active:cursor-grabbing"
-          >
-            <span className="flex items-center gap-1.5 flex-1">
-              <span className="text-[13px] font-bold text-white/80 uppercase tracking-[0.08em]">
-                Favorites
-              </span>
+          <div className="h-9 px-3 mx-2 mt-1.5 w-[calc(100%-16px)] flex items-center justify-between rounded-lg glass-subtle cursor-grab active:cursor-grabbing">
+            <span className="text-[13px] font-bold text-white/80 uppercase tracking-[0.08em]">
+              Favorites
             </span>
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="currentColor" className={`text-ghost-text-muted transition-transform ${favoritesOpen ? 'rotate-90' : ''}`}>
-              <polygon points="2,0 8,5 2,10" />
-            </svg>
-          </button>
+          </div>
           {favoritesOpen && (
             <div className="px-2 pb-1.5 space-y-0.5">
               {allProjects.filter((p: any) => favoriteIds.has(p.id)).map((p: any) => (
