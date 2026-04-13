@@ -445,20 +445,21 @@ void GhostSessionEditor::resized()
         webView->setBounds(area);
 
         // WebView2 workaround: when hosted inside a DAW plugin frame, the
-        // WebView HWND sometimes doesn't pick up its initial bounds and
-        // leaves a blank area until the user manually resizes the window.
-        // Kick it with a 1px resize shortly after first layout.
-        if (!webViewNudged && area.getWidth() > 1 && area.getHeight() > 1)
+        // WebView HWND sometimes doesn't pick up its new bounds and leaves
+        // blank space (right or bottom) until the user manually resizes the
+        // window. Kick it with a shrink+restore shortly after each layout
+        // pass so the HTML viewport (100vw/100vh) reflows correctly.
+        if (area.getWidth() > 1 && area.getHeight() > 1)
         {
-            webViewNudged = true;
-            juce::Component::SafePointer<juce::Component> safe(webView.get());
-            auto bounds = area;
-            juce::Timer::callAfterDelay(200, [safe, bounds]() {
-                if (safe != nullptr)
-                {
-                    safe->setBounds(bounds.withWidth(bounds.getWidth() - 1));
-                    safe->setBounds(bounds);
-                }
+            juce::Component::SafePointer<GhostSessionEditor> safe(this);
+            juce::Timer::callAfterDelay(150, [safe]() {
+                if (safe == nullptr || safe->webView == nullptr) return;
+                auto a = safe->getLocalBounds();
+                if (safe->dragStrip.hasItems())
+                    a.removeFromBottom(44);
+                if (a.getWidth() <= 1 || a.getHeight() <= 1) return;
+                safe->webView->setBounds(a.withSize(a.getWidth() - 1, a.getHeight() - 1));
+                safe->webView->setBounds(a);
             });
         }
     }
