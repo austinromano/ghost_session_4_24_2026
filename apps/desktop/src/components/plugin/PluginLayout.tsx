@@ -392,10 +392,8 @@ export default function PluginLayout() {
 
         {/* Your avatar */}
         <div className="relative cursor-pointer" onClick={() => { setShowSettings(!showSettings); setShowNotifs(false); }} title={user?.displayName || 'Profile'}>
-          <div className="rounded-2xl p-[2px] transition-all hover:rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:shadow-[0_0_12px_rgba(124,58,237,0.4)]" style={{ background: 'linear-gradient(180deg, #7C3AED 0%, #581C87 100%)' }}>
-            <div className="rounded-[14px] overflow-hidden hover:rounded-xl transition-all">
-              <Avatar name={user?.displayName || '?'} src={user?.avatarUrl} size="lg" />
-            </div>
+          <div className="rounded-[16px] overflow-hidden transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:rounded-full">
+            <Avatar name={user?.displayName || '?'} src={user?.avatarUrl} size="lg" />
           </div>
           <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full" style={{ background: '#23A559', border: '2.5px solid #0A0412', boxShadow: '0 0 6px rgba(35,165,89,0.5)' }} />
         </div>

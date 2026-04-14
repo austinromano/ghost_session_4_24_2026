@@ -64,12 +64,8 @@ function PresenceFriendsList({ friends, onlineActivity, selectProject, onRemoveF
                 } catch {}
               }}
             >
-              <div className="rounded-2xl p-[2px] transition-all overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:rounded-xl hover:shadow-[0_0_12px_rgba(124,58,237,0.4),0_2px_8px_rgba(0,0,0,0.3)]"
-                style={{ background: 'linear-gradient(180deg, #7C3AED 0%, #581C87 100%)' }}
-              >
-                <div className="rounded-[14px] overflow-hidden hover:rounded-xl transition-all">
-                  <Avatar name={f.displayName} src={f.avatarUrl} size="lg" />
-                </div>
+              <div className="rounded-[16px] overflow-hidden transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:rounded-full">
+                <Avatar name={f.displayName} src={f.avatarUrl} size="lg" />
               </div>
               {isOnline ? (
                 <motion.span
