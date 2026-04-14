@@ -91,9 +91,15 @@ function LaneClip({ track, selectedProjectId, deleteTrack, trackZoom, laneWidth,
       />
       {/* Track name + uploader avatar — only on the first clip in a lane */}
       {clipIndex === 0 && (
-        <div className="absolute left-2 top-1 z-10 pointer-events-none flex flex-col gap-1 items-start">
-          <p className="text-[10px] font-bold text-white/70 truncate max-w-[120px]">{displayName}</p>
-          <div title={`Added by ${ownerName}`} className="shrink-0">
+        <div className="absolute left-2 top-1 z-10 pointer-events-none flex flex-col gap-1 items-start" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.8))' }}>
+          <p className="text-[10px] font-bold text-white/80 truncate max-w-[120px]">{displayName}</p>
+          <div
+            title={`Added by ${ownerName}`}
+            className="shrink-0 rounded-[10px] overflow-hidden ring-1 ring-black/60"
+            style={{
+              boxShadow: '0 2px 6px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08) inset',
+            }}
+          >
             <Avatar name={ownerName} src={owner?.avatarUrl || null} size="xs" />
           </div>
         </div>
