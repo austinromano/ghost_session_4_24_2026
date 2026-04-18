@@ -81,7 +81,11 @@ import { serveStatic } from '@hono/node-server/serve-static';
 app.use('*', async (c, next) => {
   await next();
   const path = new URL(c.req.url).pathname;
-  if (path.endsWith('.html') || path === '/' || path === '/app') {
+  // Service worker must never be long-cached or new versions never ship.
+  if (path === '/sw.js') {
+    c.res.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    c.res.headers.set('Service-Worker-Allowed', '/');
+  } else if (path.endsWith('.html') || path === '/' || path === '/app') {
     c.res.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     c.res.headers.set('Pragma', 'no-cache');
     c.res.headers.set('Expires', '0');
