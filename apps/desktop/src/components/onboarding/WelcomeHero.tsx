@@ -89,7 +89,7 @@ export default function WelcomeHero({ userName, hasProjects, onCreateProject, on
         {/* Heading */}
         <motion.h1
           variants={rise}
-          className="text-[44px] md:text-[56px] font-bold tracking-tight text-white leading-[1.05] mb-3"
+          className="text-[26px] md:text-[30px] font-bold tracking-tight text-white leading-[1.15] mb-2"
           style={{ letterSpacing: '-0.02em' }}
         >
           {greeting}{' '}
@@ -104,7 +104,7 @@ export default function WelcomeHero({ userName, hasProjects, onCreateProject, on
         {/* Subheading */}
         <motion.p
           variants={rise}
-          className="text-[17px] md:text-[18px] text-white/55 mb-12 max-w-xl mx-auto"
+          className="text-[14px] md:text-[15px] text-white/55 mb-10 max-w-xl mx-auto"
         >
           {subheading}
         </motion.p>
