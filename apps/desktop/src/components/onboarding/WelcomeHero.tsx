@@ -8,79 +8,172 @@ interface Props {
   onExploreFeed: () => void;
 }
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.05 },
+  },
+};
+
+const rise = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const } },
+};
+
 export default function WelcomeHero({ userName, hasProjects, onCreateProject, onCreateBeat, onExploreFeed }: Props) {
   const firstName = userName?.split(' ')[0] || 'there';
-  const heading = hasProjects ? `Welcome back, ${firstName}` : `Welcome, ${firstName}`;
+  const greeting = hasProjects ? 'Welcome back,' : 'Welcome,';
   const subheading = hasProjects
     ? 'Pick up where you left off — or start something new.'
-    : 'Ghost Session lets you produce with other artists in real time — inside your DAW.';
+    : 'Produce with other artists in real time — inside your DAW.';
 
   return (
-    <motion.div
-      className="flex-1 flex flex-col items-center justify-center px-8 overflow-y-auto"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="max-w-2xl w-full text-center">
-        <motion.div
-          className="mx-auto mb-6"
-          animate={{ y: [0, -6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <svg width="72" height="80" viewBox="0 0 20 22" fill="none" style={{ filter: 'drop-shadow(0 0 12px rgba(0,255,200,0.25))' }}>
-            <defs>
-              <linearGradient id="welcomeGhost" x1="0" y1="0" x2="20" y2="22" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#00FFC8" />
-                <stop offset="100%" stopColor="#7C3AED" />
-              </linearGradient>
-            </defs>
-            <path
-              d="M10 1C5.5 1 2 4.5 2 9v8l2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2V9c0-4.5-3.5-8-8-8z"
-              fill="rgba(0,255,200,0.08)"
-              stroke="url(#welcomeGhost)"
-              strokeWidth="1.5"
-              strokeLinejoin="round"
+    <div className="relative flex-1 flex items-center justify-center px-8 overflow-hidden">
+      {/* Ambient glow orbs */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full blur-[120px]"
+        style={{ background: 'radial-gradient(circle, rgba(0,255,200,0.18) 0%, rgba(0,255,200,0) 70%)' }}
+        animate={{ x: [0, 40, 0], y: [0, -20, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-40 -right-32 w-[540px] h-[540px] rounded-full blur-[140px]"
+        style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.22) 0%, rgba(124,58,237,0) 70%)' }}
+        animate={{ x: [0, -30, 0], y: [0, 30, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="relative max-w-4xl w-full text-center z-10"
+      >
+        {/* Ghost mark */}
+        <motion.div variants={rise} className="flex justify-center mb-8">
+          <motion.div
+            className="relative"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <div
+              aria-hidden
+              className="absolute inset-0 rounded-full blur-2xl"
+              style={{ background: 'radial-gradient(circle, rgba(0,255,200,0.35) 0%, rgba(124,58,237,0.15) 50%, transparent 75%)' }}
             />
-            <ellipse cx="7.5" cy="9.5" rx="1.6" ry="1.8" fill="url(#welcomeGhost)" opacity="0.9" />
-            <ellipse cx="12.5" cy="9.5" rx="1.6" ry="1.8" fill="url(#welcomeGhost)" opacity="0.9" />
-            <ellipse cx="7.5" cy="9.2" rx="0.6" ry="0.7" fill="#0A0412" />
-            <ellipse cx="12.5" cy="9.2" rx="0.6" ry="0.7" fill="#0A0412" />
-          </svg>
+            <svg width="96" height="106" viewBox="0 0 20 22" fill="none" className="relative">
+              <defs>
+                <linearGradient id="welcomeGhostMark" x1="0" y1="0" x2="20" y2="22" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#00FFC8" />
+                  <stop offset="100%" stopColor="#7C3AED" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M10 1C5.5 1 2 4.5 2 9v8l2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2V9c0-4.5-3.5-8-8-8z"
+                fill="rgba(0,255,200,0.08)"
+                stroke="url(#welcomeGhostMark)"
+                strokeWidth="1.4"
+                strokeLinejoin="round"
+              />
+              <ellipse cx="7.5" cy="9.5" rx="1.6" ry="1.8" fill="url(#welcomeGhostMark)" opacity="0.95" />
+              <ellipse cx="12.5" cy="9.5" rx="1.6" ry="1.8" fill="url(#welcomeGhostMark)" opacity="0.95" />
+              <ellipse cx="7.5" cy="9.2" rx="0.6" ry="0.7" fill="#0A0412" />
+              <ellipse cx="12.5" cy="9.2" rx="0.6" ry="0.7" fill="#0A0412" />
+            </svg>
+          </motion.div>
         </motion.div>
 
-        <h1 className="text-[28px] font-bold text-white mb-2 tracking-tight">{heading}</h1>
-        <p className="text-[15px] text-white/60 mb-10 max-w-md mx-auto">{subheading}</p>
+        {/* Heading */}
+        <motion.h1
+          variants={rise}
+          className="text-[44px] md:text-[56px] font-bold tracking-tight text-white leading-[1.05] mb-3"
+          style={{ letterSpacing: '-0.02em' }}
+        >
+          {greeting}{' '}
+          <span
+            className="inline-block bg-clip-text text-transparent"
+            style={{ backgroundImage: 'linear-gradient(120deg, #00FFC8 0%, #7C3AED 55%, #EC4899 100%)' }}
+          >
+            {firstName}
+          </span>
+        </motion.h1>
 
-        <div className="grid grid-cols-3 gap-3 mb-10 text-left">
-          <Step number={1} title="Create a session" body="Start a new project or beat. Invite collaborators by email." />
-          <Step number={2} title="Drop stems" body="Upload mix or individual stems. Everyone hears changes live." />
-          <Step number={3} title="Drag into your DAW" body="Pull any stem from the plugin straight into Ableton." />
-        </div>
+        {/* Subheading */}
+        <motion.p
+          variants={rise}
+          className="text-[17px] md:text-[18px] text-white/55 mb-12 max-w-xl mx-auto"
+        >
+          {subheading}
+        </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <PrimaryCTA onClick={onCreateProject} label="Create your first project" />
+        {/* Steps */}
+        <motion.div variants={rise} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12 text-left">
+          <StepCard index={0} number="01" title="Create a session" body="Start a new project or beat. Invite collaborators by email." />
+          <StepCard index={1} number="02" title="Drop stems" body="Upload mix or individual stems. Everyone hears changes live." />
+          <StepCard index={2} number="03" title="Drag into your DAW" body="Pull any stem straight into Ableton — no export step." />
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div variants={rise} className="flex flex-wrap items-center justify-center gap-3">
+          <PrimaryCTA onClick={onCreateProject} label={hasProjects ? 'New project' : 'Create your first project'} />
           <SecondaryCTA onClick={onCreateBeat} label="Start a beat" />
           <SecondaryCTA onClick={onExploreFeed} label="Explore the feed" />
-        </div>
+        </motion.div>
 
-        <p className="text-[12px] text-white/30 mt-8">
-          Tip: you can also drag an audio file anywhere in the app to create a new project.
-        </p>
-      </div>
-    </motion.div>
+        <motion.p variants={rise} className="text-[12px] text-white/30 mt-10">
+          Tip — you can also drag an audio file anywhere in the app to start a new session.
+        </motion.p>
+      </motion.div>
+    </div>
   );
 }
 
-function Step({ number, title, body }: { number: number; title: string; body: string }) {
+function StepCard({ index, number, title, body }: { index: number; number: string; title: string; body: string }) {
   return (
-    <div className="rounded-xl p-4 border border-white/10 bg-white/[0.03]">
-      <div className="w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold text-white mb-3" style={{ background: 'linear-gradient(180deg, #7C3AED 0%, #581C87 100%)' }}>
+    <motion.div
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2 }}
+      className="group relative rounded-2xl p-5 overflow-hidden"
+      style={{
+        background: 'linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.015) 100%)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        boxShadow: '0 1px 0 rgba(255,255,255,0.05) inset, 0 6px 20px rgba(0,0,0,0.25)',
+      }}
+    >
+      {/* Animated gradient border on hover */}
+      <motion.div
+        aria-hidden
+        className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        style={{
+          background: `linear-gradient(${120 + index * 40}deg, rgba(0,255,200,0.35), rgba(124,58,237,0.35), rgba(236,72,153,0.2))`,
+          maskImage: 'linear-gradient(#000,#000), linear-gradient(#000,#000)',
+          WebkitMask: 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
+          WebkitMaskComposite: 'xor',
+          maskComposite: 'exclude',
+          padding: 1,
+        }}
+      />
+
+      {/* Large numeral — outlined, magazine style */}
+      <div
+        className="font-black leading-none mb-4 select-none"
+        style={{
+          fontSize: '56px',
+          letterSpacing: '-0.04em',
+          WebkitTextStroke: '1.5px rgba(255,255,255,0.22)',
+          color: 'transparent',
+          fontFeatureSettings: '"tnum"',
+        }}
+      >
         {number}
       </div>
-      <div className="text-[13px] font-semibold text-white mb-1">{title}</div>
-      <div className="text-[12px] text-white/50 leading-[1.4]">{body}</div>
-    </div>
+
+      <div className="text-[15px] font-semibold text-white mb-1.5 tracking-tight">{title}</div>
+      <div className="text-[13px] text-white/55 leading-[1.55]">{body}</div>
+    </motion.div>
   );
 }
 
@@ -90,10 +183,25 @@ function PrimaryCTA({ onClick, label }: { onClick: () => void; label: string }) 
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
-      className="px-5 h-11 rounded-full text-white text-[14px] font-semibold transition-all shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_0_20px_rgba(124,58,237,0.4),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]"
-      style={{ background: 'linear-gradient(180deg, #7C3AED 0%, #581C87 100%)' }}
+      className="relative px-7 h-12 rounded-full text-white text-[15px] font-semibold overflow-hidden"
+      style={{
+        background: 'linear-gradient(135deg, #7C3AED 0%, #4C1D95 100%)',
+        boxShadow:
+          '0 4px 14px rgba(124,58,237,0.45), 0 0 0 1px rgba(255,255,255,0.08) inset, 0 1px 0 rgba(255,255,255,0.2) inset',
+      }}
     >
-      {label}
+      {/* Sheen sweep on hover */}
+      <motion.span
+        aria-hidden
+        className="absolute inset-0 pointer-events-none"
+        initial={{ x: '-120%' }}
+        whileHover={{ x: '120%' }}
+        transition={{ duration: 0.7 }}
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)',
+        }}
+      />
+      <span className="relative">{label}</span>
     </motion.button>
   );
 }
@@ -102,9 +210,14 @@ function SecondaryCTA({ onClick, label }: { onClick: () => void; label: string }
   return (
     <motion.button
       onClick={onClick}
-      whileHover={{ scale: 1.03 }}
+      whileHover={{ scale: 1.03, borderColor: 'rgba(255,255,255,0.28)' }}
       whileTap={{ scale: 0.97 }}
-      className="px-5 h-11 rounded-full text-white text-[14px] font-semibold border border-white/15 bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/25 transition-all"
+      className="px-6 h-12 rounded-full text-white text-[14px] font-semibold transition-colors"
+      style={{
+        background: 'rgba(255,255,255,0.04)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        backdropFilter: 'blur(8px)',
+      }}
     >
       {label}
     </motion.button>
