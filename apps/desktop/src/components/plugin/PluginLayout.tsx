@@ -279,6 +279,37 @@ export default function PluginLayout() {
           <ellipse cx="12.5" cy="9.2" rx="0.6" ry="0.7" fill="#0A0412" />
         </motion.svg>
 
+        <motion.button
+          onClick={() => {
+            setShowSocial(true);
+            setSelectedProjectId(null);
+            samplePackState.setSelectedPackId(null);
+            if (selectedProjectId) { leave(); audioCleanup(); }
+          }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          title="Explore feed"
+          className={`w-11 h-11 flex items-center justify-center rounded-2xl transition-all shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:rounded-xl ${
+            showSocial
+              ? 'text-white'
+              : 'text-white/60 hover:text-white'
+          }`}
+          style={{
+            background: showSocial
+              ? 'linear-gradient(135deg, #00FFC8 0%, #7C3AED 100%)'
+              : 'rgba(255,255,255,0.05)',
+            border: showSocial ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(255,255,255,0.08)',
+            boxShadow: showSocial
+              ? '0 0 16px rgba(0,255,200,0.3), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)'
+              : '0 2px 8px rgba(0,0,0,0.3)',
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+          </svg>
+        </motion.button>
+
         <div
           className="relative cursor-pointer"
           onClick={() => { setShowSettings(!showSettings); setShowNotifs(false); }}
