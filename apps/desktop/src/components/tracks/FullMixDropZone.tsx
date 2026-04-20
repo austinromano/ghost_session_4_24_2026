@@ -90,6 +90,7 @@ export default memo(function FullMixDropZone({ projectId, onFilesAdded, isBeat, 
               </svg>
               <span className={`text-[13px] font-bold uppercase tracking-wide ml-2 ${dragOver ? 'text-ghost-green' : 'text-white'}`} style={{ textShadow: '0 2px 6px rgba(0,0,0,0.6), 0 0px 2px rgba(0,0,0,0.4)' }}>Drag audio files here</span>
               <div className="flex-1" />
+              {rightSlot}
               <motion.button
                 onClick={handleBrowse}
                 className="w-[120px] h-11 rounded-full text-white text-[14px] font-semibold flex items-center justify-center gap-2 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] hover:shadow-[0_0_20px_rgba(124,58,237,0.4),0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)] shrink-0"
@@ -104,7 +105,6 @@ export default memo(function FullMixDropZone({ projectId, onFilesAdded, isBeat, 
                 </svg>
                 Upload
               </motion.button>
-              {rightSlot}
             </>
           )}
         </div>
