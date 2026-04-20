@@ -86,6 +86,29 @@ export default function TransportBar({ tracks, projectId, projectTempo, onTempoC
     return () => clearTimeout(timer);
   }, [projectId, tracks, bufferVersion, arrangeLoadedTracks]);
 
+  // Immediate save on explicit drops / other critical moments — bypasses the
+  // 500 ms debounce so the arrangement survives if the plugin is closed
+  // right after a drag.
+  useEffect(() => {
+    if (!projectId || !tracks) return;
+    const flush = () => {
+      if (useAudioStore.getState().loadedTracks.size === 0) return;
+      const fileIdMap = new Map<string, string>();
+      for (const t of tracks) {
+        if (t.fileId) fileIdMap.set(t.id, t.fileId);
+      }
+      useAudioStore.getState().saveArrangementState(projectId, fileIdMap);
+    };
+    window.addEventListener('ghost-save-arrangement', flush);
+    window.addEventListener('pagehide', flush);
+    window.addEventListener('beforeunload', flush);
+    return () => {
+      window.removeEventListener('ghost-save-arrangement', flush);
+      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('beforeunload', flush);
+    };
+  }, [projectId, tracks]);
+
   const hasTracksLoaded = loadedTracks.size > 0;
 
   const handlePlayPause = () => {

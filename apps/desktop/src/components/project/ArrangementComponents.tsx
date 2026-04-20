@@ -101,9 +101,12 @@ function useArrangement() {
   const duration = useAudioStore((s) => s.duration);
   const bpm = projectBpm > 0 ? projectBpm : 120;
   const barSec = 240 / bpm;
-  const minDur = 16 * barSec;
-  const arrangementDur = Math.max(minDur, duration || 0);
-  const numBars = Math.ceil(arrangementDur / barSec);
+  // Round bar count up to cover the longest clip, then derive arrangementDur
+  // from exact bars. This keeps ruler tick positions (i / numBars) and clip
+  // positions (startOffset / arrangementDur) on the same denominator so
+  // clips land exactly on bar lines.
+  const numBars = Math.max(16, Math.ceil((duration || 0) / barSec));
+  const arrangementDur = numBars * barSec;
   return { bpm, barSec, arrangementDur, numBars };
 }
 
@@ -203,6 +206,10 @@ function LaneClip({ track, selectedProjectId, deleteTrack, trackZoom, laneWidth,
       setDragOffset(null);
       if (Math.abs(snapped - initialOffset) > 0.001) {
         setTrackOffset(track.id, snapped);
+        // Ask TransportBar to flush the arrangement to localStorage now so
+        // the position survives even if the plugin is torn down before the
+        // debounced save runs.
+        window.dispatchEvent(new CustomEvent('ghost-save-arrangement'));
       }
       window.removeEventListener('pointermove', handleMove);
       window.removeEventListener('pointerup', handleUp);
