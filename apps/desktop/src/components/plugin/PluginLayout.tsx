@@ -24,6 +24,7 @@ import NotificationPopup, { BellIcon } from '../common/NotificationPopup';
 import InboxPopup from '../common/InboxPopup';
 import InviteModal from '../common/InviteModal';
 import VideoGrid from '../video/VideoGrid';
+import FloatingVideoPanel from '../video/FloatingVideoPanel';
 import FullMixDropZone from '../tracks/FullMixDropZone';
 import SocialFeed from '../social/SocialFeed';
 import TransportBar from '../audio/TransportBar';
@@ -516,12 +517,6 @@ export default function PluginLayout() {
                             </div>
                           )}
 
-                          {!videoGridHidden && (
-                            <div className="mb-3">
-                              <VideoGrid members={members} userId={user?.id} variant="row" />
-                            </div>
-                          )}
-
                           <CollaboratorsBar
                             members={members}
                             onlineUsers={onlineUsers}
@@ -722,6 +717,14 @@ export default function PluginLayout() {
           </div>
         </div>
       </div>
+
+      {!videoGridHidden && selectedProjectId && currentProject && (
+        <FloatingVideoPanel
+          members={members}
+          userId={user?.id}
+          onClose={() => setVideoGridHidden(true)}
+        />
+      )}
 
       <FirstInviteNudge
         open={!!inviteNudgeProject}
