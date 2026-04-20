@@ -44,7 +44,34 @@ export function ArrangementScrollView({ children }: { children: React.ReactNode;
   return <div className="relative overflow-x-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(124,58,237,0.3) transparent' }}>{children}</div>;
 }
 
-export function BarRuler() { return null; }
+export function BarRuler() {
+  const projectBpm = useAudioStore((s) => s.projectBpm);
+  const duration = useAudioStore((s) => s.duration);
+  const bpm = projectBpm > 0 ? projectBpm : 120;
+  const barSec = 240 / bpm; // 4 beats per bar
+  // At least 16 bars so the ruler isn't blank on a fresh project; otherwise
+  // stretch to cover the longest clip.
+  const numBars = Math.max(16, Math.ceil((duration || 0) / barSec));
+
+  return (
+    <div className="relative h-[18px] w-full select-none" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      {Array.from({ length: numBars }).map((_, i) => {
+        const leftPct = (i / numBars) * 100;
+        const labeled = i % 2 === 0; // label bars 1, 3, 5, 7…
+        return (
+          <div key={i} className="absolute top-0 bottom-0 pointer-events-none" style={{ left: `${leftPct}%` }}>
+            <div className="absolute top-0 left-0" style={{ width: 1, height: labeled ? 7 : 4, background: 'rgba(255,255,255,0.22)' }} />
+            {labeled && (
+              <span className="absolute left-[3px] top-[7px] text-[9px] leading-none font-medium tracking-wider text-white/35">
+                {i + 1}
+              </span>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 export function BarGridOverlay() { return null; }
 
 /* ── Playhead across all lanes ── */

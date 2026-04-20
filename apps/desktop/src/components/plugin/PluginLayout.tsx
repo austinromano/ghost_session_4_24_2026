@@ -563,7 +563,6 @@ export default function PluginLayout() {
 
                           <ArrangementDropZone projectId={selectedProjectId!} onFilesAdded={() => fetchProject(selectedProjectId!)}>
                             <ArrangementScrollView showAll={showAllBars}>
-                              <BarRuler />
                               <FullMixDropZone
                                 projectId={selectedProjectId!}
                                 onFilesAdded={() => fetchProject(selectedProjectId!)}
@@ -608,6 +607,7 @@ export default function PluginLayout() {
                                   </svg>
                                 </button>
                               </div>
+                              <BarRuler />
                               <DraggableTrackList
                                 tracks={currentProject.tracks}
                                 selectedProjectId={selectedProjectId!}
