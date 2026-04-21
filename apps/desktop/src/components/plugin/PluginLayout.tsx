@@ -77,6 +77,7 @@ export default function PluginLayout() {
   const samplePackState = useSamplePacks();
 
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [pendingProfileUserId, setPendingProfileUserId] = useState<string | null>(null);
   const activeCommunityRoomId = useCommunityStore((s) => s.activeRoomId);
   const closeCommunityRoom = useCommunityStore((s) => s.closeRoom);
 
@@ -167,6 +168,22 @@ export default function PluginLayout() {
     };
     window.addEventListener('ghost-open-project', openHandler);
     return () => window.removeEventListener('ghost-open-project', openHandler);
+  }, []);
+
+  // Open a user's profile page from anywhere in the app. Clicking an Avatar
+  // with a userId fires 'ghost-open-profile' — we navigate to the Social
+  // section (where the profile view lives) and pass the id down so SocialFeed
+  // loads it on mount. Community room close fires too to avoid overlap.
+  useEffect(() => {
+    const openProfile = (e: Event) => {
+      const userId = (e as CustomEvent<{ userId: string }>).detail?.userId;
+      if (!userId) return;
+      closeCommunityRoom();
+      setPendingProfileUserId(userId);
+      goTo('explore');
+    };
+    window.addEventListener('ghost-open-profile', openProfile);
+    return () => window.removeEventListener('ghost-open-profile', openProfile);
   }, []);
 
   // Always land on WelcomeHero when the plugin opens — user picks a project
@@ -780,7 +797,12 @@ export default function PluginLayout() {
                   </div>
                 </>
               ) : showSocial ? (
-                <SocialFeed user={user} friends={friends} />
+                <SocialFeed
+                  user={user}
+                  friends={friends}
+                  initialProfileUserId={pendingProfileUserId}
+                  onProfileShown={() => setPendingProfileUserId(null)}
+                />
               ) : showMessages ? (
                 <MessagesView friends={friends} />
               ) : showMarketplace ? (

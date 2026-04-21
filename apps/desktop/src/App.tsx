@@ -7,7 +7,6 @@ import LoginPage from './pages/LoginPage';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import OfflineScreen from './components/onboarding/OfflineScreen';
 import BookingInviteToast from './components/messages/BookingInviteToast';
-import ProfileOverlay from './components/social/ProfileOverlay';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 
 export default function App() {
@@ -28,7 +27,6 @@ export default function App() {
     <ErrorBoundary>
       {isAuthenticated ? <PluginLayout /> : <LoginPage />}
       {isAuthenticated && <BookingInviteToast />}
-      {isAuthenticated && <ProfileOverlay />}
       <AnimatePresence>{!online && <OfflineScreen key="offline" />}</AnimatePresence>
     </ErrorBoundary>
   );

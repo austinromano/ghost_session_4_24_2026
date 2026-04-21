@@ -116,7 +116,7 @@ function SocialAudioPlayer({ audioFileId }: { audioFileId: string }) {
   );
 }
 
-function SocialFeed({ user, friends }: { user: any; friends: any[] }) {
+function SocialFeed({ user, friends, initialProfileUserId, onProfileShown }: { user: any; friends: any[]; initialProfileUserId?: string | null; onProfileShown?: () => void }) {
   const [tab, setTab] = useState<'feed' | 'explore' | 'activity'>('feed');
   const [posts, setPosts] = useState<any[]>([]);
   const [newPost, setNewPost] = useState('');
@@ -135,6 +135,16 @@ function SocialFeed({ user, friends }: { user: any; friends: any[] }) {
 
   const loadFeed = () => { setLoading(true); fetch(`${BASE}/feed`, { headers: authHeader }).then(r => r.json()).then(d => { if (d.data) setPosts(d.data); }).catch((err) => devWarn('SocialFeed.loadFeed', err)).finally(() => setLoading(false)); };
   useEffect(() => { loadFeed(); }, []);
+
+  // Load the profile when an id is passed in (e.g. an avatar click elsewhere
+  // in the app routed here). Clear the pending id afterward so a repeat
+  // click on the same user still re-routes correctly.
+  useEffect(() => {
+    if (!initialProfileUserId) return;
+    setProfileUser(null);
+    loadProfile(initialProfileUserId);
+    onProfileShown?.();
+  }, [initialProfileUserId]);
   const loadExplore = () => { fetch(`${BASE}/explore`, { headers: authHeader }).then(r => r.json()).then(d => { if (d.data) setExploreUsers(d.data); }).catch((err) => devWarn('SocialFeed.loadExplore', err)); };
   const loadActivity = () => { fetch(`${BASE}/activity`, { headers: authHeader }).then(r => r.json()).then(d => { if (d.data) setActivities(d.data); }).catch((err) => devWarn('SocialFeed.loadActivity', err)); };
   const loadProfile = (userId: string) => { fetch(`${BASE}/profile/${userId}`, { headers: authHeader }).then(r => r.json()).then(d => { if (d.data) setProfileUser(d.data); }).catch((err) => devWarn('SocialFeed.loadProfile', err)); };
