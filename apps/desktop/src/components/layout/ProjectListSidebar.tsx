@@ -3,6 +3,7 @@ import { Reorder } from 'framer-motion';
 import type { SamplePack } from '@ghost/types';
 import { api } from '../../lib/api';
 import { useAudioStore } from '../../stores/audioStore';
+import { ROOMS as COMMUNITY_ROOMS } from '../social/CommunityRooms';
 
 export type { SamplePack };
 
@@ -201,12 +202,21 @@ function ProjectListSidebar({
   const [projectsOpen, setProjectsOpen] = useState(true);
   const [packsOpen, setPacksOpen] = useState(false);
   const beatsOpen = true;
+  const [communitiesOpen, setCommunitiesOpen] = useState(true);
   const [sectionOrder, setSectionOrder] = useState<string[]>(() => {
+    const defaults = ['collabs', 'projects', 'favorites', 'communities', 'samples'];
     try {
       const saved = localStorage.getItem('ghost_sidebar_order');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: string[] = JSON.parse(saved);
+        // Append any newly-added default sections that aren't in the stored
+        // order yet (e.g. 'communities' for users who had a saved order
+        // from before this section existed).
+        for (const k of defaults) if (!parsed.includes(k)) parsed.push(k);
+        return parsed;
+      }
     } catch {}
-    return ['collabs', 'projects', 'favorites', 'samples'];
+    return defaults;
   });
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(() => {
     try { return new Set(JSON.parse(localStorage.getItem('ghost_favorites') || '[]')); } catch { return new Set(); }
@@ -378,6 +388,50 @@ function ProjectListSidebar({
             </div>
           )}
         </div>
+        </Reorder.Item>
+          );
+          if (sectionKey === 'communities') return (
+        <Reorder.Item key="communities" value="communities" style={{ listStyle: 'none' }} className="cursor-grab active:cursor-grabbing" whileDrag={{ scale: 1.02, zIndex: 50, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+          <div>
+            <button
+              onClick={() => setCommunitiesOpen((v) => !v)}
+              className="group w-full flex items-center gap-2 px-3 pt-4 pb-2 cursor-grab active:cursor-grabbing select-none"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-ghost-green shrink-0">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              <span className="text-[14px] font-bold text-white tracking-tight">Communities</span>
+              <span className="ml-auto text-[11px] font-semibold text-white/30 tabular-nums">{COMMUNITY_ROOMS.length}</span>
+            </button>
+            {communitiesOpen && (
+              <div className="px-2 pb-1.5 space-y-0.5">
+                {COMMUNITY_ROOMS.map((room) => (
+                  <button
+                    key={room.id}
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('ghost-toast', { detail: { message: `Joining ${room.name}…` } }));
+                    }}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 text-[13px] rounded-md transition-colors text-ghost-text-muted font-normal hover:bg-white/[0.04] hover:text-ghost-text-secondary"
+                  >
+                    <span
+                      className="shrink-0 w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px]"
+                      style={{ background: room.gradient, boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.15)' }}
+                    >
+                      <span>{room.icon}</span>
+                    </span>
+                    <span className="truncate flex-1 text-left">{room.name}</span>
+                    <span className="shrink-0 flex items-center gap-1 text-[10px] text-white/40">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22C55E' }} />
+                      {room.online >= 1000 ? `${(room.online / 1000).toFixed(1)}K` : room.online}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </Reorder.Item>
           );
           if (sectionKey === 'samples') return null;

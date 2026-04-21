@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
  * wiring up real membership + online presence + chat is a separate feature.
  * Clicking Join just logs for now so the UX fits without a backend.
  */
-interface Room {
+export interface Room {
   id: string;
   name: string;
   tagline: string;
@@ -16,7 +16,7 @@ interface Room {
   gradient: string; // CSS gradient for the avatar halo
 }
 
-const ROOMS: Room[] = [
+export const ROOMS: Room[] = [
   {
     id: 'girl-producers',
     name: 'Girl Producers',
