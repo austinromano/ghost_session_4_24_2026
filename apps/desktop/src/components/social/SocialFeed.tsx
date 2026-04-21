@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import Avatar from '../common/Avatar';
+import CommunityRooms from './CommunityRooms';
 import { API_BASE } from '../../lib/constants';
 import { devWarn } from '../../lib/log';
 
@@ -290,6 +291,7 @@ function SocialFeed({ user, friends }: { user: any; friends: any[] }) {
       ))}</div>
       <div className="flex-1 overflow-y-auto px-5 pt-2 pb-3">
         {tab === 'feed' && (<>
+          <CommunityRooms />
           <div
             className={`bg-ghost-surface/60 rounded-xl border px-4 py-3 mb-4 transition-all ${dropDragOver ? 'border-purple-400/60 bg-purple-500/5' : 'border-white/[0.06]'}`}
             onDragOver={(e) => { e.preventDefault(); setDropDragOver(true); }}
