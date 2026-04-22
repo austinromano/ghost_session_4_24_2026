@@ -147,9 +147,13 @@ export default function PluginLayout() {
 
   // Polling fallback: refresh project data periodically in case socket.io
   // project-updated events are missed (e.g. plugin WebView).
+  // Bumped 5 s → 120 s. The old interval was ~17k refetches per client per
+  // day at ~300-500 KB each, which amplifies into huge Railway egress when
+  // multiple collaborators are online. Sockets cover the live-sync case;
+  // this is purely a safety net for dropped events.
   useEffect(() => {
     if (!selectedProjectId) return;
-    const pollTimer = setInterval(() => { fetchProject(selectedProjectId); }, 5000);
+    const pollTimer = setInterval(() => { fetchProject(selectedProjectId); }, 120000);
     const handleRefresh = () => { fetchProject(selectedProjectId); fetchProjects(); };
     window.addEventListener('ghost-refresh-project', handleRefresh);
     return () => { clearInterval(pollTimer); window.removeEventListener('ghost-refresh-project', handleRefresh); };

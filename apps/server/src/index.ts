@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { compress } from 'hono/compress';
 import { HTTPException } from 'hono/http-exception';
 import { serve } from '@hono/node-server';
 import { createServer } from 'node:http';
@@ -33,6 +34,12 @@ const app = new Hono();
 // Global middleware
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:5173,http://localhost:1420')
   .split(',').map((s) => s.trim()).filter(Boolean);
+// Gzip responses so JSON payloads (project detail with inline peaks, feeds,
+// member lists) don't blow egress. Binary audio streams already have the
+// `Accept-Ranges`/content-type set and are negligible to compress, so this
+// primarily benefits the large JSON endpoints.
+app.use('*', compress());
+
 app.use('*', cors({
   origin: (origin) => {
     if (!origin) return origin;

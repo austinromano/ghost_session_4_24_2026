@@ -8,7 +8,7 @@ import { authMiddleware, type AuthUser } from '../middleware/auth.js';
 import { createAutoSnapshot } from '../lib/autoSnapshot.js';
 import { postActivityComment } from '../lib/activityComment.js';
 import { assertMember, assertEditor } from '../lib/membership.js';
-import { emitProjectUpdated } from '../ws/index.js';
+import { emitProjectUpdated, emitArrangementUpdated } from '../ws/index.js';
 
 const projectRoutes = new Hono();
 projectRoutes.use('*', authMiddleware);
@@ -177,13 +177,16 @@ projectRoutes.put('/:id/arrangement', async (c) => {
       .set({ arrangementJson: serialized, updatedAt: new Date().toISOString() })
       .where(eq(projects.id, projectId))
       .run();
-    console.log(`[arrangement.save] ok project=${projectId} user=${user.id} clips=${body.clips.length} bytes=${serialized.length}`);
   } catch (err) {
     console.error(`[arrangement.save] FAILED project=${projectId} user=${user.id}:`, err);
     throw err;
   }
 
-  emitProjectUpdated(projectId, 'metadata-updated');
+  // Lightweight broadcast — carries just the new JSON. DO NOT use
+  // emitProjectUpdated here; that would force every collaborator to refetch
+  // the entire project detail (including inline peaks) and compounds into
+  // a huge egress bill during rapid saves.
+  emitArrangementUpdated(projectId, serialized);
   return c.json({ success: true });
 });
 

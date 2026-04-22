@@ -166,6 +166,10 @@ export interface ServerToClientEvents {
     createdAt: string;
   }) => void;
   'community:message-deleted': (data: { roomId: string; messageId: string }) => void;
+  // Lightweight arrangement broadcast — carries just the new JSON blob so
+  // clients can patch their local state without refetching the entire
+  // project detail (which includes peaks and can be 200-400 KB per track).
+  'arrangement-updated': (data: { projectId: string; arrangementJson: string | null }) => void;
   'transport:remote-tick': (data: {
     projectId: string;
     userId: string;

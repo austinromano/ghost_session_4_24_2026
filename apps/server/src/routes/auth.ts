@@ -118,7 +118,17 @@ auth.get('/avatars/:fileName', async (c) => {
 
   if (user?.avatarData) {
     const buffer = Buffer.from(user.avatarData, 'base64');
-    return new Response(buffer, { headers: { 'Content-Type': user.avatarMime || 'image/jpeg', 'Cache-Control': 'public, max-age=86400' } });
+    return new Response(buffer, {
+      headers: {
+        'Content-Type': user.avatarMime || 'image/jpeg',
+        // Immutable-ish caching — avatars are small but scrape-attractive.
+        // A long cache lets the CDN / browser serve repeat loads without
+        // re-hitting origin. If the user rotates their avatar, the
+        // filename changes (upload writes a new id), so the cached copy
+        // stays correct.
+        'Cache-Control': 'public, max-age=2592000, immutable',
+      },
+    });
   }
 
   throw new HTTPException(404, { message: 'Avatar not found' });

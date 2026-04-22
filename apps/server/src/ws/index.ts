@@ -107,3 +107,9 @@ export function emitBookingUpdated(userIds: string[], kind: 'created' | 'updated
     ioInstance?.to(`user:${uid}`).emit('booking-updated', { kind, bookingId, booking });
   }
 }
+
+/** Broadcast an arrangement change to every socket in a project room,
+ *  carrying just the JSON blob so clients avoid a full project refetch. */
+export function emitArrangementUpdated(projectId: string, arrangementJson: string | null) {
+  ioInstance?.to(`project:${projectId}`).emit('arrangement-updated', { projectId, arrangementJson });
+}

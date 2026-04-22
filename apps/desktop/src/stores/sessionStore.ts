@@ -128,6 +128,20 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       }
     });
 
+    // Lightweight arrangement patch — avoid the full project refetch. Just
+    // splice the new blob into currentProject so TransportBar's live-sync
+    // effect picks it up and applies it.
+    socket.on('arrangement-updated', (data) => {
+      const pid = get().currentProjectId;
+      if (!pid || data.projectId !== pid) return;
+      const store = useProjectStore.getState();
+      const cur = store.currentProject;
+      if (!cur || cur.id !== pid) return;
+      useProjectStore.setState({
+        currentProject: { ...cur, arrangementJson: data.arrangementJson },
+      });
+    });
+
     // Polling fallback: fetch new chat messages periodically in case
     // socket.io broadcasts are missed (e.g. inside plugin WebView)
     if (chatPollTimer) clearInterval(chatPollTimer);
@@ -149,7 +163,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
           return { chatMessages: merged };
         });
       }).catch((err) => { if (typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV) console.warn('[sessionStore] chat fetch failed:', err); });
-    }, 4000);
+    }, 30000);
   },
 
   leave: () => {

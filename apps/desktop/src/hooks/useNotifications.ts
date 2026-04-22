@@ -76,7 +76,9 @@ export function useNotifications() {
   useEffect(() => {
     fetchInvitations();
     fetchNotifications();
-    const poll = setInterval(() => { fetchInvitations(); fetchNotifications(); }, 10000);
+    // 60 s — was 10 s. Notifications land in real time via sockets; this
+    // is only a safety net for missed events and doesn't need to be chatty.
+    const poll = setInterval(() => { fetchInvitations(); fetchNotifications(); }, 60000);
     return () => clearInterval(poll);
   }, []);
 
