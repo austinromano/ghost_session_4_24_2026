@@ -116,7 +116,11 @@ export default function TransportBar({ tracks, projectId, projectTempo, onTempoC
       try {
         const parsed = JSON.parse(serverArrangementJson);
         if (parsed && Array.isArray(parsed.clips)) {
-          console.log('[arrangement] applying server blob', { clips: parsed.clips.length });
+          const loaded = useAudioStore.getState().loadedTracks;
+          const matched = parsed.clips.filter((c: any) => loaded.has(c.trackId)).length;
+          const trackIds = Array.from(loaded.keys()).map((k) => k.slice(0, 8));
+          const clipIds = parsed.clips.map((c: any) => `${c.trackId.slice(0, 8)}@${c.startOffset.toFixed(2)}`);
+          console.log('[arrangement] applying server blob', { clipsInBlob: parsed.clips.length, matchedInLoaded: matched, loadedTrackIds: trackIds, blobClips: clipIds });
           useAudioStore.getState().applyArrangementClips(parsed.clips);
           lastAppliedServerRef.current = serverArrangementJson;
           return;
@@ -189,9 +193,15 @@ export default function TransportBar({ tracks, projectId, projectTempo, onTempoC
   useEffect(() => {
     if (!projectId || !tracks) return;
     const flush = () => {
-      if (useAudioStore.getState().loadedTracks.size === 0) return;
-      // Don't flush a stale pre-restore state back to the server.
-      if (restoredProjectIdRef.current !== projectId) return;
+      const size = useAudioStore.getState().loadedTracks.size;
+      if (size === 0) {
+        console.log('[arrangement] flush skipped — no tracks loaded', { projectId });
+        return;
+      }
+      if (restoredProjectIdRef.current !== projectId) {
+        console.log('[arrangement] flush skipped — restore not yet run', { projectId, ref: restoredProjectIdRef.current });
+        return;
+      }
       const fileIdMap = new Map<string, string>();
       for (const t of tracks) {
         if (t.fileId) fileIdMap.set(t.id, t.fileId);
@@ -199,9 +209,15 @@ export default function TransportBar({ tracks, projectId, projectTempo, onTempoC
       useAudioStore.getState().saveArrangementState(projectId, fileIdMap);
       try {
         const state = useAudioStore.getState().buildArrangementState(fileIdMap);
+        const offsets = state.clips.map((c: any) => `${c.trackId.slice(0, 6)}@${c.startOffset.toFixed(2)}`);
+        console.log('[arrangement] flush POST', { projectId, clips: state.clips.length, offsets });
         lastSentServerRef.current = JSON.stringify(state);
-        api.saveArrangement(projectId, state).catch(() => {});
-      } catch { /* ignore */ }
+        api.saveArrangement(projectId, state).then(() => {
+          console.log('[arrangement] flush POST ok', { projectId });
+        }).catch((err) => {
+          console.error('[arrangement] flush POST FAILED', err);
+        });
+      } catch (err) { console.error('[arrangement] flush build failed', err); }
     };
     window.addEventListener('ghost-save-arrangement', flush);
     window.addEventListener('pagehide', flush);
