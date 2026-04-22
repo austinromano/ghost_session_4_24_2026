@@ -172,32 +172,32 @@ export default function DmAudioBubble({ fileId, fileName, isOwn, audioPath = '/d
       </div>
       {ready && (
         <button
-          title="Drag into DAW"
-          onMouseDown={(e) => {
+          title="Add to DragStrip"
+          onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             const url = `${API_BASE}${audioPath}/${fileId}${token ? `?token=${token}` : ''}`;
             const safeName = fileName.match(/\.(wav|mp3|flac|aiff|ogg|m4a|aac)$/i) ? fileName : `${fileName}.wav`;
-            const ghostUrl = `ghost://drag-to-daw?url=${encodeURIComponent(url)}&fileName=${encodeURIComponent(safeName)}`;
+            // ghost://download-stem downloads the file and pushes it onto the
+            // DragStrip below the plugin — same dock the Download-Stems button
+            // uses. From there the user drags into their DAW.
+            const ghostUrl = `ghost://download-stem?url=${encodeURIComponent(url)}&fileName=${encodeURIComponent(safeName)}`;
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.src = ghostUrl;
             document.body.appendChild(iframe);
             setTimeout(() => iframe.remove(), 1000);
           }}
-          className="shrink-0 w-7 h-7 rounded-md flex items-center justify-center cursor-grab active:cursor-grabbing transition-colors"
+          className="shrink-0 w-7 h-7 rounded-md flex items-center justify-center hover:brightness-125 transition-all"
           style={{
             background: 'rgba(0,0,0,0.15)',
             color: isOwn ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.5)',
           }}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="9" cy="5" r="1.2" fill="currentColor" />
-            <circle cx="15" cy="5" r="1.2" fill="currentColor" />
-            <circle cx="9" cy="12" r="1.2" fill="currentColor" />
-            <circle cx="15" cy="12" r="1.2" fill="currentColor" />
-            <circle cx="9" cy="19" r="1.2" fill="currentColor" />
-            <circle cx="15" cy="19" r="1.2" fill="currentColor" />
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
         </button>
       )}
