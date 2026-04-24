@@ -10,7 +10,9 @@ interface Props {
 }
 
 export default function CollaboratorsBar({ members, onlineUsers, onInvite }: Props) {
-  const sorted = [...members].sort((a, b) => (a.role === 'owner' ? -1 : b.role === 'owner' ? 1 : 0));
+  // Host goes LAST in the cluster so the host avatar sits immediately next
+  // to the host name/HOST badge to its right.
+  const sorted = [...members].sort((a, b) => (a.role === 'owner' ? 1 : b.role === 'owner' ? -1 : 0));
   const owners = sorted.filter((m) => m.role === 'owner');
   const speakingUserIds = useWebrtcStore((s) => s.speakingUserIds);
 
@@ -53,10 +55,9 @@ export default function CollaboratorsBar({ members, onlineUsers, onInvite }: Pro
           {sorted.map(renderAvatar)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {owners.map((m) => (
-              <span key={m.userId} className="flex items-center gap-2">
-                {renderAvatar(m)}
+              <span key={m.userId} className="flex items-center gap-1.5">
                 <span className="text-[15px] font-semibold text-ghost-text-primary">{m.displayName}</span>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-white bg-[#5865F2] px-2 py-0.5 rounded-md">HOST</span>
               </span>
