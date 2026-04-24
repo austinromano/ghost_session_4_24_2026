@@ -719,17 +719,17 @@ export default function PluginLayout() {
                   </div>
 
                   {/* Right panel (video + chat) */}
-                  <div className="flex items-stretch shrink-0 h-full">
+                  <div className={`relative flex flex-col self-stretch ${chatCollapsed ? 'w-5 shrink-0' : 'w-[280px] shrink-0'}`}>
                     <button
                       onClick={() => setChatCollapsed(!chatCollapsed)}
-                      className="self-center w-6 h-16 flex items-center justify-center rounded-l-md glass hover:bg-white/[0.08] text-white/70 hover:text-ghost-green transition-colors"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-5 h-10 flex items-center justify-center rounded-full glass hover:bg-white/[0.08] transition-colors"
                       title={chatCollapsed ? 'Show chat' : 'Hide chat'}
                     >
-                      <svg width="10" height="14" viewBox="0 0 10 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        {chatCollapsed ? <polyline points="3,2 7,7 3,12" /> : <polyline points="7,2 3,7 7,12" />}
+                      <svg width="8" height="12" viewBox="0 0 8 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ghost-text-muted">
+                        {chatCollapsed ? <polyline points="6,1 2,6 6,11" /> : <polyline points="2,1 6,6 2,11" />}
                       </svg>
                     </button>
-                    <div className={`flex flex-col min-h-0 h-full gap-1 overflow-hidden transition-[width] duration-200 ${chatCollapsed ? 'w-0' : 'w-[280px]'}`}>
+                    <div className="flex flex-col min-h-0 h-full gap-1 flex-1">
                     {!chatCollapsed && (
                       <>
                         <div className="w-full shrink-0 flex items-center justify-evenly glass glass-glow rounded-2xl h-[50px]">
@@ -807,17 +807,17 @@ export default function PluginLayout() {
                     members={[]}
                     onInvite={() => setShowInvite(true)}
                   />
-                  <div className="flex items-stretch shrink-0 h-full">
+                  <div className={`relative flex flex-col self-stretch ${chatCollapsed ? 'w-5 shrink-0' : 'w-[280px] shrink-0'}`}>
                     <button
                       onClick={() => setChatCollapsed(!chatCollapsed)}
-                      className="self-center w-6 h-16 flex items-center justify-center rounded-l-md glass hover:bg-white/[0.08] text-white/70 hover:text-ghost-green transition-colors"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-5 h-10 flex items-center justify-center rounded-full glass hover:bg-white/[0.08] transition-colors"
                       title={chatCollapsed ? 'Show chat' : 'Hide chat'}
                     >
-                      <svg width="10" height="14" viewBox="0 0 10 14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        {chatCollapsed ? <polyline points="3,2 7,7 3,12" /> : <polyline points="7,2 3,7 7,12" />}
+                      <svg width="8" height="12" viewBox="0 0 8 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-ghost-text-muted">
+                        {chatCollapsed ? <polyline points="6,1 2,6 6,11" /> : <polyline points="2,1 6,6 2,11" />}
                       </svg>
                     </button>
-                    <div className={`flex flex-col min-h-0 h-full gap-2 overflow-hidden transition-[width] duration-200 ${chatCollapsed ? 'w-0' : 'w-[280px]'}`}>
+                    <div className="flex flex-col min-h-0 h-full gap-2 flex-1">
                     {!chatCollapsed && (
                       <>
                         <div className="w-full shrink-0">
